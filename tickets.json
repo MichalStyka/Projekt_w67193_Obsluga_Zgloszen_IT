@@ -1,0 +1,38 @@
+[
+  {
+    "ticketId": "TKT-31560",
+    "title": "Outlook",
+    "description": "Nie działa outlook",
+    "reporterName": "Michal S",
+    "reporterEmail": "ms@email.com",
+    "priority": "Wysoki",
+    "status": "Nowe",
+    "assignedTechnicianName": null,
+    "createdAt": "2025-06-27 22:56:42",
+    "lastUpdated": "2025-06-27 22:56:42",
+  },
+  {
+    "ticketId": "TKT-12346",
+    "title": "Błąd serwera email",
+    "description": "Serwer poczty elektronicznej zwraca błędy 500",
+    "reporterName": "Piotr Nowak",
+    "reporterEmail": "piotr.nowak@firma.pl",
+    "priority": "Wysoki",
+    "status": "Nowe",
+    "assignedTechnicianName": null,
+    "createdAt": "2025-06-27 22:56:42",
+    "lastUpdated": "2025-06-27 22:56:42",
+  },
+  {
+    "ticketId": "TKT-12345",
+    "title": "Nie działa drukarka",
+    "description": "Drukarka w biurze nie reaguje na polecenia drukowania",
+    "reporterName": "Anna Kowalska",
+    "reporterEmail": "anna.kowalska@firma.pl",
+    "priority": "Średni",
+    "status": "Nowe",
+    "assignedTechnicianName": null,
+    "createdAt": "2025-06-27 22:56:42",
+    "lastUpdated": "2025-06-27 22:56:42",
+  }
+]
