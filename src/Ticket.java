@@ -6,8 +6,6 @@ public class Ticket {
     public enum Status {
         NOWE("Nowe"),
         W_TRAKCIE("W trakcie"),
-        OCZEKUJE_NA_KLIENTA("Oczekuje na klienta"),
-        ROZWIAZANE("Rozwiązane"),
         ZAMKNIETE("Zamknięte");
 
         private final String displayName;

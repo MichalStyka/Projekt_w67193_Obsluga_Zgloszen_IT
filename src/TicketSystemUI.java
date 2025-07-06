@@ -15,7 +15,7 @@ public class TicketSystemUI {
     public TicketSystemUI(TicketService ticketService) {
         if (ticketService == null) {
             throw new IllegalArgumentException("Usługa systemu zgłoszeń nie może być null");
-        }
+            }
         this.ticketService = ticketService;
         this.scanner = new Scanner(System.in);
         this.dateFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
@@ -28,20 +28,55 @@ public class TicketSystemUI {
             displayMainMenu();
             int choice = readIntChoice();
             switch (choice) {
-                case 1 -> displayAllTickets();
-                case 2 -> searchTicketById();
-                case 3 -> createNewTicket();
-                case 4 -> assignTicket();
-                case 5 -> closeTicket();
-                case 6 -> showActiveTickets();
-                case 7 -> showTechnicians();
-                case 8 -> addNewTechnician();
-                case 9 -> exit = true;
-                default -> System.out.println("Nieprawidłowy wybór. Spróbuj ponownie.");
+                case 1 -> {
+                    displayAllTickets();
+                    waitForKeyPress();
+                }
+                case 2 -> {
+
+                    searchTicketById();
+                    waitForKeyPress();
+                }
+                case 3 -> {
+                    createNewTicket();
+                    waitForKeyPress();
+                }
+                case 4 -> {
+                    assignTicket();
+                    waitForKeyPress();
+                }
+                case 5 -> {
+                    closeTicket();
+                    waitForKeyPress();
+                }
+                case 6 -> {
+                    showActiveTickets();
+                    waitForKeyPress();
+                }
+                case 7 -> {
+                    showTechnicians();
+                    waitForKeyPress();
+                }
+                case 8 -> {
+                    addNewTechnician();
+                    waitForKeyPress();
+                }
+                case 9 -> {
+                    exit = true;
+                }
+                default ->{
+                        waitForKeyPress();
+                        System.out.println("Nieprawidłowy wybór. Spróbuj ponownie.");
+                }
             }
         }
         scanner.close();
         System.out.println("Dziękujemy za korzystanie z systemu obsługi zgłoszeń IT!");
+    }
+
+    private void waitForKeyPress() {
+        System.out.println("\nNaciśnij Enter, aby kontynuować...");
+        scanner.nextLine();
     }
 
     private void displayMainMenu() {
@@ -71,6 +106,7 @@ public class TicketSystemUI {
         }
         System.out.println("\nŁączna liczba zgłoszeń: " + ticketService.getTotalTicketCount());
     }
+
 
     private void showActiveTickets() {
         System.out.println("\n===== AKTYWNE ZGŁOSZENIA =====");
@@ -121,7 +157,7 @@ public class TicketSystemUI {
         System.out.print("Imię i nazwisko zgłaszającego: ");
         String reporterName = scanner.nextLine().trim();
         System.out.print("Email zgłaszającego: ");
-        String reporterEmail = scanner.nextLine().trim();
+         String reporterEmail = scanner.nextLine().trim();
 
         System.out.println("Wybierz priorytet:");
         System.out.println("1. Niski");
@@ -154,7 +190,7 @@ public class TicketSystemUI {
     }
 
     private void assignTicket() {
-        System.out.println("\n===== PRZYPISYWANIE ZGŁOSZENIA =====");
+         System.out.println("\n===== PRZYPISYWANIE ZGŁOSZENIA =====");
         System.out.print("Podaj ID zgłoszenia do przypisania (TKT-XXXXX): ");
         String ticketId = scanner.nextLine().trim();
 
@@ -229,7 +265,7 @@ public class TicketSystemUI {
 
     private String generateTicketId() {
         int number = 10000 + random.nextInt(90000);
-        return "TKT-" + number;
+        return "TKT-" + number; //ticket
     }
 
     private int readIntChoice() {
