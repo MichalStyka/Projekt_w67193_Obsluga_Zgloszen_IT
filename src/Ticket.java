@@ -40,19 +40,19 @@ public class Ticket {
             throw new IllegalArgumentException("ID zgłoszenia musi mieć format TKT-XXXXX (5 cyfr)");
         }
         if (title == null || title.trim().isEmpty()) {
-            throw new IllegalArgumentException("Tytuł zgłoszenia nie może być pusty");
+            throw new IllegalArgumentException("Tytuł zgłoszenia nie może być pusty !");
         }
         if (description == null || description.trim().isEmpty()) {
-            throw new IllegalArgumentException("Opis zgłoszenia nie może być pusty");
+            throw new IllegalArgumentException("Opis zgłoszenia nie może być pusty !");
         }
         if (reporterName == null || reporterName.trim().isEmpty()) {
-            throw new IllegalArgumentException("Nazwa zgłaszającego nie może być pusta");
+            throw new IllegalArgumentException("Nazwa zgłaszającego nie może być pusta !");
         }
         if (reporterEmail == null || reporterEmail.trim().isEmpty() || !reporterEmail.contains("@")) {
-            throw new IllegalArgumentException("Email zgłaszającego musi być prawidłowy");
+            throw new IllegalArgumentException("Email zgłaszającego musi być prawidłowy !");
         }
         if (priority == null) {
-            throw new IllegalArgumentException("Priorytet nie może być null");
+            throw new IllegalArgumentException("Priorytet nie może być null !");
         }
 
         this.ticketId = ticketId;

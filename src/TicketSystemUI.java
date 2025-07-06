@@ -74,6 +74,7 @@ public class TicketSystemUI {
         System.out.println("Dziękujemy za korzystanie z systemu obsługi zgłoszeń IT!");
     }
 
+
     private void waitForKeyPress() {
         System.out.println("\nNaciśnij Enter, aby kontynuować...");
         scanner.nextLine();

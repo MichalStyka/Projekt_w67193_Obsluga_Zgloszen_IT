@@ -1,5 +1,5 @@
 import java.io.*;
-import java.time.LocalDateTime;
+// import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
@@ -147,7 +147,7 @@ public class Json {
             System.out.println("Wczytano " + technicians.size() + " techników z pliku: " + TECHNICIANS_FILE);
         } catch (IOException e) {
             System.err.println("Błąd podczas wczytywania techników: " + e.getMessage());
-            return Arrays.asList("Jan Kowalski", "Anna Nowak", "Piotr Wiśniewski");
+           // return Arrays.asList("Jan Kowalski", "Anna Nowak", "Piotr Wiśniewski");
         }
 
         return technicians;
@@ -176,7 +176,7 @@ public class Json {
      * Parsuje pojedynczą linię JSON-a w formacie "klucz": "wartość".
      */
     private void parseJsonLine(String line, Map<String, String> data) {
-        // Usuń przecinek na końcu jeśli jest
+
         if (line.endsWith(",")) {
             line = line.substring(0, line.length() - 1);
         }
@@ -187,16 +187,16 @@ public class Json {
         String key = line.substring(0, colonIndex).trim();
         String value = line.substring(colonIndex + 1).trim();
 
-        // Usuń cudzysłowy z klucza
+
         if (key.startsWith("\"") && key.endsWith("\"")) {
             key = key.substring(1, key.length() - 1);
         }
 
-        // Obsłuż wartość
+
         if (value.equals("null")) {
             data.put(key, null);
         } else if (value.startsWith("\"") && value.endsWith("\"")) {
-            // Usuń cudzysłowy z wartości
+
             value = value.substring(1, value.length() - 1);
             data.put(key, unescapejSON(value));
         } else {
@@ -216,13 +216,13 @@ public class Json {
             String reporterEmail = data.get("reporterEmail");
             String priorityStr = data.get("priority");
 
-            // Konwertuj priorytet
+
             Ticket.Priority priority = convertPriority(priorityStr);
 
             // Utwórz zgłoszenie
             Ticket ticket = new Ticket(ticketId, title, description, reporterName, reporterEmail, priority);
 
-            // Przypisz technika jeśli jest
+            // Przypisz technikaa
             String assignedTechnician = data.get("assignedTechnicianName");
             if (assignedTechnician != null && !assignedTechnician.isEmpty()) {
                 ticket.assignToTechnician(assignedTechnician);
