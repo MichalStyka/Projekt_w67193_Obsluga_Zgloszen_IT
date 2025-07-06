@@ -28,7 +28,6 @@ public class Json {
                         (ticket.getAssignedTechnicianName() != null ?
                                 "\"" + escapeJson(ticket.getAssignedTechnicianName()) + "\"" : "null") + ",");
                 writer.println("    \"createdAt\": \"" + ticket.getCreatedAt().format(DATE_FORMATTER) + "\",");
-                writer.println("    \"lastUpdated\": \"" + ticket.getLastUpdated().format(DATE_FORMATTER) + "\",");
 
                 writer.print("  }");
                 if (i < tickets.size() - 1) {

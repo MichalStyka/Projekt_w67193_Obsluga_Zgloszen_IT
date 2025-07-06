@@ -16,6 +16,7 @@ public class TicketSystem {
 
         // Wczytaj dane z plików JSON
         loadDataFromFiles();
+
     }
 
     private void loadDataFromFiles() {
@@ -27,6 +28,31 @@ public class TicketSystem {
         List<Ticket> loadedTickets = dataManager.loadTickets();
         for (Ticket ticket : loadedTickets) {
             tickets.put(ticket.getTicketId(), ticket);
+        }
+        if (tickets.isEmpty()) {
+            System.out.println("Brak zgłoszeń w systemie. Dodawanie przykładowych danych...");
+
+            try {
+                // Dodaj przykładowe zgłoszenia
+                Ticket ticket1 = new Ticket("TKT-12345", "Nie działa drukarka",
+                        "Drukarka w biurze nie reaguje na polecenia drukowania",
+                        "Anna Kowalska", "anna.kowalska@firma.pl", Ticket.Priority.SREDNI);
+
+                Ticket ticket2 = new Ticket("TKT-12346", "Błąd serwera email",
+                        "Serwer poczty elektronicznej zwraca błędy 500",
+                        "Piotr Nowak", "piotr.nowak@firma.pl", Ticket.Priority.WYSOKI);
+
+                tickets.put(ticket1.getTicketId(), ticket1);
+                tickets.put(ticket2.getTicketId(), ticket2);
+
+                // Zapisz przykładowe dane do plików
+                saveDataToFiles();
+
+                System.out.println("Dodano przykładowe zgłoszenia do systemu.");
+
+            } catch (IllegalArgumentException e) {
+                System.err.println("Błąd podczas dodawania przykładowych zgłoszeń: " + e.getMessage());
+            }
         }
     }
 

@@ -34,7 +34,7 @@ public class Ticket {
     private final LocalDateTime createdAt;
     private Status status;
     private String assignedTechnicianName;
-    private LocalDateTime lastUpdated;
+
 
     public Ticket(String ticketId, String title, String description,
                   String reporterName, String reporterEmail, Priority priority) {
@@ -64,7 +64,6 @@ public class Ticket {
         this.reporterEmail = reporterEmail;
         this.priority = priority;
         this.createdAt = LocalDateTime.now();
-        this.lastUpdated = LocalDateTime.now();
         this.status = Status.NOWE;
     }
 
@@ -77,13 +76,13 @@ public class Ticket {
         }
         this.assignedTechnicianName = technicianName;
         this.status = Status.W_TRAKCIE;
-        this.lastUpdated = LocalDateTime.now();
+
     }
 
     public void close() {
 
         this.status = Status.ZAMKNIETE;
-        this.lastUpdated = LocalDateTime.now();
+
     }
 
     public boolean isAssigned() {
@@ -104,7 +103,7 @@ public class Ticket {
     public LocalDateTime getCreatedAt() { return createdAt; }
     public Status getStatus() { return status; }
     public String getAssignedTechnicianName() { return assignedTechnicianName; }
-    public LocalDateTime getLastUpdated() { return lastUpdated; }
+
 
     @Override
     public boolean equals(Object o) {
