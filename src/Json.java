@@ -1,14 +1,15 @@
 import java.io.*;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 /**
- * Klasa zarządzająca zapisem i odczytem danych do/z plików JSON.
+ * Klasa zarządzająca zapisem i odczytem danych plików JSON.
  */
+
 public class Json {
     private static final String TICKETS_FILE = "tickets.json";
     private static final String TECHNICIANS_FILE = "technicians.json";
-
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     public void saveTickets(List<Ticket> tickets) {
@@ -18,16 +19,17 @@ public class Json {
                 Ticket ticket = tickets.get(i);
                 writer.println("  {");
                 writer.println("    \"ticketId\": \"" + ticket.getTicketId() + "\",");
-                writer.println("    \"title\": \"" + escapeJson(ticket.getTitle()) + "\",");
-                writer.println("    \"description\": \"" + escapeJson(ticket.getDescription()) + "\",");
-                writer.println("    \"reporterName\": \"" + escapeJson(ticket.getReporterName()) + "\",");
+                writer.println("    \"title\": \"" + escapejSON(ticket.getTitle()) + "\",");
+                writer.println("    \"description\": \"" + escapejSON(ticket.getDescription()) + "\",");
+                writer.println("    \"reporterName\": \"" + escapejSON(ticket.getReporterName()) + "\",");
                 writer.println("    \"reporterEmail\": \"" + ticket.getReporterEmail() + "\",");
                 writer.println("    \"priority\": \"" + ticket.getPriority() + "\",");
                 writer.println("    \"status\": \"" + ticket.getStatus() + "\",");
                 writer.println("    \"assignedTechnicianName\": " +
                         (ticket.getAssignedTechnicianName() != null ?
-                                "\"" + escapeJson(ticket.getAssignedTechnicianName()) + "\"" : "null") + ",");
+                                "\"" + escapejSON(ticket.getAssignedTechnicianName()) + "\"" : "null") + ",");
                 writer.println("    \"createdAt\": \"" + ticket.getCreatedAt().format(DATE_FORMATTER) + "\",");
+                
 
                 writer.print("  }");
                 if (i < tickets.size() - 1) {
@@ -37,7 +39,7 @@ public class Json {
                 }
             }
             writer.println("]");
-//            System.out.println("Zgłoszenia zostały zapisane do pliku: " + TICKETS_FILE);
+            //            System.out.println("Zgłoszenia zostały zapisane do pliku: " + TICKETS_FILE);
         } catch (IOException e) {
             System.err.println("Błąd podczas zapisywania zgłoszeń: " + e.getMessage());
         }
@@ -48,39 +50,41 @@ public class Json {
      *
      * @return lista wczytanych zgłoszeń
      */
+
     public List<Ticket> loadTickets() {
-        
         List<Ticket> tickets = new ArrayList<>();
         File file = new File(TICKETS_FILE);
 
+        if (!file.exists()) {
+            System.out.println("Plik " + TICKETS_FILE + " nie istnieje.");
+            return tickets;
+        }
+
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
-            StringBuilder jsonContent = new StringBuilder();
             String line;
+            Map<String, String> currentTicket = new HashMap<>();
+            boolean inTicketObject = false;
+
             while ((line = reader.readLine()) != null) {
-                jsonContent.append(line.trim());
-            }
+                line = line.trim();
 
-            String content = jsonContent.toString();
-            if (content.startsWith("[") && content.endsWith("]")) {
-                content = content.substring(1, content.length() - 1); // Usuń nawiasy []
-
-                if (!content.trim().isEmpty()) {
-                    String[] ticketObjects = splitJsonObjects(content);
-
-                    for (String ticketJson : ticketObjects) {
-                        try {
-                            Ticket ticket = parseTicketFromJson(ticketJson);
-                            if (ticket != null) {
-                                tickets.add(ticket);
-                            }
-                        } catch (Exception e) {
-                            System.err.println("Błąd podczas parsowania zgłoszenia: " + e.getMessage());
+                if (line.equals("{")) {
+                    inTicketObject = true;
+                    currentTicket.clear();
+                } else if (line.equals("}") || line.equals("},")) {
+                    if (inTicketObject && !currentTicket.isEmpty()) {
+                        Ticket ticket = createTicketFromMap(currentTicket);
+                        if (ticket != null) {
+                            tickets.add(ticket);
                         }
                     }
+                    inTicketObject = false;
+                } else if (inTicketObject && line.contains(":")) {
+                    parseJsonLine(line, currentTicket);
                 }
             }
 
-            System.out.println("Wczytano zgłoszenia z pliku: " + TICKETS_FILE);
+            System.out.println("Wczytano " + tickets.size() + " zgłoszeń z pliku: " + TICKETS_FILE);
         } catch (IOException e) {
             System.err.println("Błąd podczas wczytywania zgłoszeń: " + e.getMessage());
         }
@@ -97,7 +101,7 @@ public class Json {
         try (PrintWriter writer = new PrintWriter(new FileWriter(TECHNICIANS_FILE))) {
             writer.println("[");
             for (int i = 0; i < technicians.size(); i++) {
-                writer.print("  \"" + escapeJson(technicians.get(i)) + "\"");
+                writer.print("  \"" + escapejSON(technicians.get(i)) + "\"");
                 if (i < technicians.size() - 1) {
                     writer.println(",");
                 } else {
@@ -105,12 +109,10 @@ public class Json {
                 }
             }
             writer.println("]");
-//            System.out.println("Technicy zostali zapisani do pliku: " + TECHNICIANS_FILE);
         } catch (IOException e) {
             System.err.println("Błąd podczas zapisywania techników: " + e.getMessage());
         }
     }
-
     /**
      * Wczytuje techników z pliku JSON.
      *
@@ -126,29 +128,23 @@ public class Json {
         }
 
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
-            StringBuilder jsonContent = new StringBuilder();
             String line;
             while ((line = reader.readLine()) != null) {
-                jsonContent.append(line.trim());
-            }
-
-            String content = jsonContent.toString();
-            if (content.startsWith("[") && content.endsWith("]")) {
-                content = content.substring(1, content.length() - 1); // Usuń nawiasy []
-
-                if (!content.trim().isEmpty()) {
-                    String[] technicianNames = content.split(",");
-                    for (String name : technicianNames) {
-                        name = name.trim();
-                        if (name.startsWith("\"") && name.endsWith("\"")) {
-                            name = name.substring(1, name.length() - 1); // Usuń cudzysłowy
-                            technicians.add(unescapeJson(name));
-                        }
+                line = line.trim();
+                // Szukaj linii zawierających nazwy techników w cudzysłowach
+                if (line.startsWith("\"") && (line.endsWith("\"") || line.endsWith("\","))) {
+                    String name = line.substring(1); // Usuń pierwszy cudzysłów
+                    if (name.endsWith(",")) {
+                        name = name.substring(0, name.length() - 1); // Usuń przecinek
                     }
+                    if (name.endsWith("\"")) {
+                        name = name.substring(0, name.length() - 1); // Usuń ostatni cudzysłów
+                    }
+                    technicians.add(unescapejSON(name));
                 }
             }
 
-            System.out.println("Wczytano techników z pliku: " + TECHNICIANS_FILE);
+            System.out.println("Wczytano " + technicians.size() + " techników z pliku: " + TECHNICIANS_FILE);
         } catch (IOException e) {
             System.err.println("Błąd podczas wczytywania techników: " + e.getMessage());
             return Arrays.asList("Jan Kowalski", "Anna Nowak", "Piotr Wiśniewski");
@@ -158,164 +154,98 @@ public class Json {
     }
 
 
-    // Metody pomocnicze
-
-    private String escapeJson(String str) {
+    /**
+     * escapowanie  JSON.
+     */
+    private String escapejSON(String str) {
         if (str == null) return null;
-        return str.replace("\\", "\\\\")
-                .replace("\"", "\\\"")
-                .replace("\n", "\\n")
-                .replace("\r", "\\r")
-                .replace("\t", "\\t");
+        return str.replace("\"", "\\\"")
+                .replace("\n", " ")  // Zamień nowe linie na spacje
+                .replace("\r", " ");
     }
 
-    private String unescapeJson(String str) {
+    /**
+     * unescapowanie JSON.
+     */
+    private String unescapejSON(String str) {
         if (str == null) return null;
-        return str.replace("\\\"", "\"")
-                .replace("\\\\", "\\")
-                .replace("\\n", "\n")
-                .replace("\\r", "\r")
-                .replace("\\t", "\t");
+        return str.replace("\\\"", "\"");
     }
 
-    private String[] splitJsonObjects(String content) {
-        List<String> objects = new ArrayList<>();
-        StringBuilder current = new StringBuilder();
-        int braceCount = 0;
-        boolean inString = false;
-        boolean escaped = false;
-
-        for (char c : content.toCharArray()) {
-            if (escaped) {
-                escaped = false;
-                current.append(c);
-                continue;
-            }
-
-            if (c == '\\' && inString) {
-                escaped = true;
-                current.append(c);
-                continue;
-            }
-
-            if (c == '"') {
-                inString = !inString;
-            }
-
-            if (!inString) {
-                if (c == '{') {
-                    braceCount++;
-                } else if (c == '}') {
-                    braceCount--;
-                }
-            }
-
-            current.append(c);
-
-            if (!inString && braceCount == 0 && c == '}') {
-                objects.add(current.toString().trim());
-                current = new StringBuilder();
-
-            }
+    /**
+     * Parsuje pojedynczą linię JSON-a w formacie "klucz": "wartość".
+     */
+    private void parseJsonLine(String line, Map<String, String> data) {
+        // Usuń przecinek na końcu jeśli jest
+        if (line.endsWith(",")) {
+            line = line.substring(0, line.length() - 1);
         }
 
-        return objects.toArray(new String[0]);
+        int colonIndex = line.indexOf(":");
+        if (colonIndex == -1) return;
+
+        String key = line.substring(0, colonIndex).trim();
+        String value = line.substring(colonIndex + 1).trim();
+
+        // Usuń cudzysłowy z klucza
+        if (key.startsWith("\"") && key.endsWith("\"")) {
+            key = key.substring(1, key.length() - 1);
+        }
+
+        // Obsłuż wartość
+        if (value.equals("null")) {
+            data.put(key, null);
+        } else if (value.startsWith("\"") && value.endsWith("\"")) {
+            // Usuń cudzysłowy z wartości
+            value = value.substring(1, value.length() - 1);
+            data.put(key, unescapejSON(value));
+        } else {
+            data.put(key, value);
+        }
     }
 
-    private Ticket parseTicketFromJson(String jsonString) {
+    /**
+     * Tworzy obiekt Ticket z mapy danych.
+     */
+    private Ticket createTicketFromMap(Map<String, String> data) {
         try {
-            Map<String, String> values = new HashMap<>();
+            String ticketId = data.get("ticketId");
+            String title = data.get("title");
+            String description = data.get("description");
+            String reporterName = data.get("reporterName");
+            String reporterEmail = data.get("reporterEmail");
+            String priorityStr = data.get("priority");
 
-            // Usuń nawiasy klamrowe
-            String content = jsonString.trim();
-            if (content.startsWith("{") && content.endsWith("}")) {
-                content = content.substring(1, content.length() - 1);
-            }
-
-            // Parsuj pary klucz-wartość
-            String[] pairs = splitJsonPairs(content);
-            for (String pair : pairs) {
-                String[] keyValue = pair.split(":", 2);
-                if (keyValue.length == 2) {
-                    String key = keyValue[0].trim().replaceAll("\"", "");
-                    String value = keyValue[1].trim();
-
-                    if (value.equals("null")) {
-                        values.put(key, null);
-                    } else {
-                        value = value.replaceAll("^\"|\"$", ""); // Usuń cudzysłowy na początku i końcu
-                        values.put(key, unescapeJson(value));
-                    }
-                }
-            }
+            // Konwertuj priorytet
+            Ticket.Priority priority = convertPriority(priorityStr);
 
             // Utwórz zgłoszenie
-            String ticketId = values.get("ticketId");
-            String title = values.get("title");
-            String description = values.get("description");
-            String reporterName = values.get("reporterName");
-            String reporterEmail = values.get("reporterEmail");
-            String priorityStr = values.get("priority");
-            Ticket.Priority priority;
-
-// Konwersja dla kompatybilności
-            switch (priorityStr) {
-                case "Niski" -> priority = Ticket.Priority.NISKI;
-                case "Średni" -> priority = Ticket.Priority.SREDNI;
-                case "Wysoki" -> priority = Ticket.Priority.WYSOKI;
-                case "Krytyczny" -> priority = Ticket.Priority.KRYTYCZNY;
-                default -> priority = Ticket.Priority.valueOf(priorityStr); // Próbuj normalnie
-            }
-
             Ticket ticket = new Ticket(ticketId, title, description, reporterName, reporterEmail, priority);
 
-            // Ustaw dodatkowe pola przez refleksję (uproszczona wersja)
-            if (values.get("assignedTechnicianName") != null) {
-                ticket.assignToTechnician(values.get("assignedTechnicianName"));
+            // Przypisz technika jeśli jest
+            String assignedTechnician = data.get("assignedTechnicianName");
+            if (assignedTechnician != null && !assignedTechnician.isEmpty()) {
+                ticket.assignToTechnician(assignedTechnician);
             }
 
             return ticket;
         } catch (Exception e) {
-//            System.err.println("Błąd podczas parsowania zgłoszenia: " + e.getMessage());
+            System.err.println("Błąd podczas tworzenia zgłoszenia: " + e.getMessage());
             return null;
         }
     }
 
-    private String[] splitJsonPairs(String content) {
-        List<String> pairs = new ArrayList<>();
-        StringBuilder current = new StringBuilder();
-        boolean inString = false;
-        boolean escaped = false;
+    /**
+     * Konwertuje string na Priority enum.
+     */
+    private Ticket.Priority convertPriority(String priorityStr) {
+        return switch (priorityStr) {
+            case "Niski" -> Ticket.Priority.NISKI;
+            case "Średni" -> Ticket.Priority.SREDNI;
+            case "Wysoki" -> Ticket.Priority.WYSOKI;
+            case "Krytyczny" -> Ticket.Priority.KRYTYCZNY;
+            default -> Ticket.Priority.SREDNI; //domyslnie sredni priority
 
-        for (char c : content.toCharArray()) {
-            if (escaped) {
-                escaped = false;
-                current.append(c);
-                continue;
-            }
-
-            if (c == '\\' && inString) {
-                escaped = true;
-                current.append(c);
-                continue;
-            }
-
-            if (c == '"') {
-                inString = !inString;
-            }
-
-            if (!inString && c == ',') {
-                pairs.add(current.toString().trim());
-                current = new StringBuilder();
-            } else {
-                current.append(c);
-            }
-        }
-
-        if (!current.isEmpty()) {
-            pairs.add(current.toString().trim());
-        }
-
-        return pairs.toArray(new String[0]);
+        };
     }
 }
