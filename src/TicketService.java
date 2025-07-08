@@ -52,6 +52,10 @@ public class TicketService {
         }
     }
 
+    public List<Ticket> getUnassignedTickets() {
+        return ticketSystem.getUnassignedTickets();
+    }
+
 
     public void closeTicket(String ticketId) {
         ticketSystem.closeTicket(ticketId);

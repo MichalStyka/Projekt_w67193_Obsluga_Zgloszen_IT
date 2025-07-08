@@ -62,8 +62,13 @@ public class TicketSystemUI {
                     waitForKeyPress();
                 }
                 case 9 -> {
-                    exit = true;
+                    showUnassignedTickets();
                 }
+
+                case 10 ->
+                    exit = true;
+                
+
                 default ->{
                         waitForKeyPress();
                         System.out.println("Nieprawidłowy wybór. Spróbuj ponownie.");
@@ -90,8 +95,9 @@ public class TicketSystemUI {
         System.out.println("6. Pokaż aktywne zgłoszenia");
         System.out.println("7. Pokaż techników");
         System.out.println("8. Dodaj nowego technika");
-        System.out.println("9. Wyjście");
-        System.out.print("Wybierz opcję (1-9): ");
+        System.out.println("9. Pokaż nieprzypisane zgłoszenia");
+        System.out.println("10. Wyjście");
+        System.out.print("Wybierz opcję (1-10): ");
     }
 
     private void displayAllTickets() {
@@ -121,6 +127,19 @@ public class TicketSystemUI {
         }
         System.out.println("\nLiczba aktywnych zgłoszeń: " + ticketService.getActiveTicketCount());
     }
+
+//    private void showUnassignedTickets() {
+//        System.out.println("\n===== NIEPRZYPISANE ZGŁOSZENIA =====");
+//        List<Ticket> tickets = ticketService.getActiveTickets();
+//        if (tickets.isEmpty()) {
+//            System.out.println("Brak nieprzypisanych zgłoszeń w systemie. Wszystkie zgłoszenia są obecnie obsługiwane przez technika.");
+//            return;
+//        }
+//        for (Ticket ticket : tickets) {
+//            displayTicketDetails(ticket);
+//        }
+//        System.out.println("\nLiczba nieprzypisanych zgłoszeń: " + ticketService.getActiveTicketCount());
+//    }
 
     private void displayTicketDetails(Ticket ticket) {
         System.out.println("\nID: " + ticket.getTicketId());
@@ -261,6 +280,23 @@ public class TicketSystemUI {
         } catch (Exception e) {
             System.out.println("Błąd: " + e.getMessage());
         }
+    }
+
+    /**
+            * Wyświetla nieprzypisane zgłoszenia.
+ */
+    private void showUnassignedTickets() {
+        System.out.println("\n===== NIEPRZYPISANE ZGŁOSZENIA =====");
+        List<Ticket> tickets = ticketService.getUnassignedTickets();
+        if (tickets.isEmpty()) {
+            System.out.println("Wszystkie zgłoszenia są przypisane.");
+            return;
+        }
+        for (Ticket ticket : tickets) {
+            displayTicketDetails(ticket);
+        }
+        System.out.println("\nLiczba nieprzypisanych zgłoszeń: " + tickets.size());
+        waitForKeyPress();
     }
 
 

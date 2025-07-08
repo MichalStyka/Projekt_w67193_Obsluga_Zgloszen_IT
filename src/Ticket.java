@@ -1,5 +1,6 @@
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Objects;
 
 public class Ticket {
@@ -76,6 +77,8 @@ public class Ticket {
         this.status = Status.W_TRAKCIE;
 
     }
+
+
 
     public void close() {
 

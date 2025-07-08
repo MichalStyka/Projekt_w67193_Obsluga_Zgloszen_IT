@@ -8,7 +8,7 @@
     "priority": "Krytyczny",
     "status": "Nowe",
     "assignedTechnicianName": null,
-    "createdAt": "2025-07-06 17:35:32",
+    "createdAt": "2025-07-08 21:17:03",
   },
   {
     "ticketId": "TKT-12346",
@@ -17,9 +17,9 @@
     "reporterName": "Piotr Nowak",
     "reporterEmail": "piotr.nowak@firma.pl",
     "priority": "Wysoki",
-    "status": "Nowe",
-    "assignedTechnicianName": null,
-    "createdAt": "2025-07-06 17:34:34",
+    "status": "W trakcie",
+    "assignedTechnicianName": "Anna Nowak",
+    "createdAt": "2025-07-08 21:17:03",
   },
   {
     "ticketId": "TKT-12345",
@@ -30,6 +30,6 @@
     "priority": "Średni",
     "status": "Nowe",
     "assignedTechnicianName": null,
-    "createdAt": "2025-07-06 17:34:34",
+    "createdAt": "2025-07-08 21:17:03",
   }
 ]

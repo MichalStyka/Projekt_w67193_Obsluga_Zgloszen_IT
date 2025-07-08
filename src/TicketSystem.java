@@ -135,6 +135,12 @@ public class TicketSystem {
                 .collect(Collectors.toList());
     }
 
+    public List<Ticket> getUnassignedTickets() {
+        return tickets.values().stream()
+                .filter(ticket -> !ticket.isAssigned())
+                .collect(Collectors.toList());
+    }
+
     public int getTotalTicketCount() {
         return tickets.size();
     }
