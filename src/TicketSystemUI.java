@@ -62,13 +62,13 @@ public class TicketSystemUI {
                     waitForKeyPress();
                 }
                 case 9 -> {
-                    showUnassignedTickets();
+                    removeTechnician();
                     waitForKeyPress();
                 }
 
                 case 10 ->{
-                        removeTechnician();
-                        waitForKeyPress();
+                    showUnassignedTickets();
+                    waitForKeyPress();
                 }
 
                 case 11 ->
@@ -315,23 +315,16 @@ public class TicketSystemUI {
 
         if (choice >= 1 && choice <= technicians.size()) {
             String technicianName = technicians.get(choice - 1);
-            System.out.print("Czy na pewno chcesz usunąć technika '" + technicianName + "'? (tak/nie): ");
-            String confirmation = scanner.nextLine().trim().toLowerCase();
 
-            if (confirmation.equals("tak") || confirmation.equals("t")) {
-                try {
-                    ticketService.removeTechnician(technicianName);
-                    System.out.println("Technik został pomyślnie usunięty z systemu.");
-                } catch (Exception e) {
-                    System.out.println("Błąd: " + e.getMessage());
-                }
-            } else {
-                System.out.println("Operacja anulowana.");
+
+            try {
+                ticketService.removeTechnician(technicianName);
+                System.out.println("Technik został pomyślnie usunięty z systemu.");
+            } catch (Exception e) {
+                System.out.println("Błąd: " + e.getMessage());
             }
-        } else {
-            System.out.println("Nieprawidłowy wybór.");
+
         }
-        waitForKeyPress();
     }
 
     /**
