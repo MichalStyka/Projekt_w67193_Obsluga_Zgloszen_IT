@@ -76,6 +76,10 @@ public class TicketService {
         });
     }
 
+    public void removeTechnician(String technicianName) {
+        ticketSystem.removeTechnician(technicianName);
+    }
+
     public int getTotalTicketCount() {
         return ticketSystem.getTotalTicketCount();
     }

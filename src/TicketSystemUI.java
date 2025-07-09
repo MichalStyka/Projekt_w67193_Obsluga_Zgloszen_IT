@@ -63,9 +63,15 @@ public class TicketSystemUI {
                 }
                 case 9 -> {
                     showUnassignedTickets();
+                    waitForKeyPress();
                 }
 
-                case 10 ->
+                case 10 ->{
+                        removeTechnician();
+                        waitForKeyPress();
+                }
+
+                case 11 ->
                     exit = true;
                 
 
@@ -95,9 +101,10 @@ public class TicketSystemUI {
         System.out.println("6. Pokaż aktywne zgłoszenia");
         System.out.println("7. Pokaż techników");
         System.out.println("8. Dodaj nowego technika");
-        System.out.println("9. Pokaż nieprzypisane zgłoszenia");
-        System.out.println("10. Wyjście");
-        System.out.print("Wybierz opcję (1-10): ");
+        System.out.println("9. Usuń technika");
+        System.out.println("10.Pokaż nieprzypisane zgłoszenia");
+        System.out.println("11.Wyjście");
+        System.out.print("Wybierz opcję wpisując (1-11): ");
     }
 
     private void displayAllTickets() {
@@ -280,6 +287,51 @@ public class TicketSystemUI {
         } catch (Exception e) {
             System.out.println("Błąd: " + e.getMessage());
         }
+    }
+
+    private void removeTechnician() {
+        System.out.println("\n===== USUWANIE TECHNIKA =====");
+
+        List<String> technicians = ticketService.getAllTechnicians();
+        if (technicians.isEmpty()) {
+            System.out.println("Brak techników w systemie.");
+            waitForKeyPress();
+            return;
+        }
+
+        System.out.println("Dostępni technicy:");
+        for (int i = 0; i < technicians.size(); i++) {
+            String technicianName = technicians.get(i);
+            int activeTickets = ticketService.getTicketsAssignedTo(technicianName)
+                    .stream()
+                    .mapToInt(ticket -> ticket.isActive() ? 1 : 0)
+                    .sum();
+            System.out.println((i + 1) + ". " + technicianName +
+                    " (aktywnych zgłoszeń: " + activeTickets + ")");
+        }
+
+        System.out.print("Wybierz technika do usunięcia (1-" + technicians.size() + "): ");
+        int choice = readIntChoice();
+
+        if (choice >= 1 && choice <= technicians.size()) {
+            String technicianName = technicians.get(choice - 1);
+            System.out.print("Czy na pewno chcesz usunąć technika '" + technicianName + "'? (tak/nie): ");
+            String confirmation = scanner.nextLine().trim().toLowerCase();
+
+            if (confirmation.equals("tak") || confirmation.equals("t")) {
+                try {
+                    ticketService.removeTechnician(technicianName);
+                    System.out.println("Technik został pomyślnie usunięty z systemu.");
+                } catch (Exception e) {
+                    System.out.println("Błąd: " + e.getMessage());
+                }
+            } else {
+                System.out.println("Operacja anulowana.");
+            }
+        } else {
+            System.out.println("Nieprawidłowy wybór.");
+        }
+        waitForKeyPress();
     }
 
     /**

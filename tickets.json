@@ -8,7 +8,7 @@
     "priority": "Krytyczny",
     "status": "Nowe",
     "assignedTechnicianName": null,
-    "createdAt": "2025-07-08 21:17:03",
+    "createdAt": "2025-07-09 20:40:17",
   },
   {
     "ticketId": "TKT-12346",
@@ -19,7 +19,7 @@
     "priority": "Wysoki",
     "status": "W trakcie",
     "assignedTechnicianName": "Anna Nowak",
-    "createdAt": "2025-07-08 21:17:03",
+    "createdAt": "2025-07-09 20:40:17",
   },
   {
     "ticketId": "TKT-12345",
@@ -30,6 +30,6 @@
     "priority": "Średni",
     "status": "Nowe",
     "assignedTechnicianName": null,
-    "createdAt": "2025-07-08 21:17:03",
+    "createdAt": "2025-07-09 20:40:17",
   }
 ]

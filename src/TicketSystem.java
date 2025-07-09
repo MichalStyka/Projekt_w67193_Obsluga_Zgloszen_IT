@@ -141,6 +141,31 @@ public class TicketSystem {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Usuwa technika z systemu.
+     *
+     * @param technicianName nazwa technika do usunięcia
+     * @throws IllegalArgumentException jeśli technik nie istnieje lub ma przypisane zgłoszenia
+     */
+    public void removeTechnician(String technicianName) {
+        if (!technicians.contains(technicianName)) {
+            throw new IllegalArgumentException("Technik " + technicianName + " nie istnieje w systemie");
+        }
+
+        // Sprawdź czy technik ma przypisane aktywne zgłoszenia
+        List<Ticket> assignedTickets = getTicketsAssignedTo(technicianName).stream()
+                .filter(Ticket::isActive)
+                .toList();
+
+        if (!assignedTickets.isEmpty()) {
+            throw new IllegalArgumentException("Nie można usunąć technika " + technicianName +
+                    " - ma przypisane " + assignedTickets.size() + " aktywnych zgłoszeń");
+        }
+
+        technicians.remove(technicianName);
+        saveDataToFiles(); // Auto-save po usunięciu
+    }
+
     public int getTotalTicketCount() {
         return tickets.size();
     }
